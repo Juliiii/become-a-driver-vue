@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # jiaxiaobaodian
 
 > A Vue.js project
@@ -19,3 +20,6 @@ npm run build --report
 ```
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+=======
+# become-a-driver-vue
+>>>>>>> f4146a6aa42f1ae0c65ac65ad78f87c612e2418d
