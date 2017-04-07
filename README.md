@@ -1,7 +1,6 @@
 # jiaxiaobaodian
 
-> A Vue.js project
-
+> A webapp creatd by Vue
 ## Build Setup
 
 ``` bash
