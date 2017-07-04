@@ -16,7 +16,7 @@
       }
     },
     methods: {
-      clickhandle(index) {
+      clickhandle (index) {
         let address = '',
             prefix = '/kemuyi/';
         if (typeof index !== 'number')

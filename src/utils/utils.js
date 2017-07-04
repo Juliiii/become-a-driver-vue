@@ -67,15 +67,15 @@ function update(index) {
 function computeAnswer(json) {
   if (json['Type'] === '1') {
     switch (json['ta']) {
-      case '1': return '对'; break;
-      case '2': return '错'; break;
+      case '1': return '对';
+      case '2': return '错';
     }
   } else {
     switch (json['ta']) {
-      case '1': return 'A'; break;
-      case '2': return 'B'; break;
-      case '3': return 'C'; break;
-      case '4': return 'D'; break;
+      case '1': return 'A';
+      case '2': return 'B';
+      case '3': return 'C';
+      case '4': return 'D';
     }
   }
 }
