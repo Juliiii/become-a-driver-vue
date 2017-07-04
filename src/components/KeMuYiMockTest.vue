@@ -4,7 +4,7 @@
       <mt-button icon="back" slot="left"></mt-button>
     </mt-header>
 
-
+    <loading v-if="!ready" class="content"></loading>
     <div class="content" v-if="ready">
       <div class="question">
         <span v-if="currentinfo.Type === '1'">判断</span>
@@ -29,7 +29,7 @@
 
 
 
-    <mt-tabbar class="tabber" :fixed="false" v-if="ready">
+    <mt-tabbar class="tabber" :fixed="false">
       <mt-tab-item @click.native.stop="pre">
         <img slot="icon" src="../icons/arrow-left.png">
         上一题

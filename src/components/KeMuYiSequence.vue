@@ -7,7 +7,7 @@
       <mt-button slot="right" v-if="ready">{{current}}/{{total}}</mt-button>
     </mt-header>
 
-
+    <loading v-if="!ready" class="content"></loading>
     <div class="content" v-if="ready">
       <div class="question">
         <span v-if="currentinfo.Type === '1'">判断</span>
@@ -32,7 +32,7 @@
 
 
 
-    <mt-tabbar class="tabber" :fixed="false" v-if="ready">
+    <mt-tabbar class="tabber" :fixed="false">
       <mt-tab-item @click.native.stop="pre">
         <img slot="icon" src="../icons/arrow-left.png">
         上一题
@@ -51,7 +51,8 @@
 
 <script>
   import { Toast, MessageBox } from 'mint-ui';
-  import { update, initcheckbox, computeAnswer, deepclone, storage } from '../utils/utils'
+  import { update, initcheckbox, computeAnswer, deepclone, storage } from '../utils/utils';
+  import loading from './loading';
   export default {
     data() {
       return {
@@ -69,6 +70,9 @@
     },
     created() {
       this.init();
+    },
+    components: {
+      loading
     },
     computed: {
       answer() {
@@ -122,7 +126,7 @@
       },
       async next() {
         this.value = ''
-        this.ready = this.show1 =false;
+        this.ready = this.show1 = false;
         if (this.current === this.total) {
           let action = '';
           try {
@@ -141,7 +145,7 @@
         try {
           this.currentinfo = deepclone(await update(this.current));
           this.value = this.sqpstates[this.current - 1];
-          this.ready = true;
+          setTimeout(() => this.ready = true, 500);
         } catch (e) {}
       },
       async pre() {
@@ -159,7 +163,7 @@
         try {
           this.currentinfo = deepclone(await update(this.current));
           this.value = this.sqpstates[this.current - 1];
-          this.ready = true;
+          setTimeout(() => this.ready = true, 500);
         } catch (e) {}
       },
       selectHandle(index) {

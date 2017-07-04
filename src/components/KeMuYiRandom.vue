@@ -152,11 +152,7 @@
           try {
             this.currentinfo = deepclone(await update(temp));
             this.value = this.ranstates[temp];
-            let that = this;
-            setTimeout(function() {
-              that.ready = true;
-            }, 2000);
-            // this.ready = true;
+            setTimeout(() => this.ready = true, 500);
           } catch (e) {}
         }
       },
@@ -175,7 +171,7 @@
           try {
             this.currentinfo = deepclone(await update(parseInt(this.ranrecord[this.current - 1])));
             this.value = this.ranstates[this.ranrecord[this.current - 1]];
-            this.ready = true;
+            setTimeout(() => this.ready = true, 500);
           } catch (e) {}
         }
       },
