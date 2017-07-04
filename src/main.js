@@ -10,6 +10,8 @@ Vue.use(Mint);
 Vue.use(VueResource);
 Vue.config.productionTip = false
 
+Vue.prototype.$imgPrefix = 'http://ww3.sinaimg.cn/mw600/';
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

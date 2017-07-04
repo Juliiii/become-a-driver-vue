@@ -14,7 +14,7 @@
         <span v-else>单选</span>
         {{problem.question}}
       </div>
-      <img v-if="problem.sinaimg" :src="imgprefix + problem.sinaimg" class="image">
+      <img v-if="problem.sinaimg" :src="$imgPrefix + problem.sinaimg" class="image">
       <div class="item-group">
         <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)">
           <div v-show="!select || (select != index + 1 && problem.ta != index + 1)">{{o.index}}</div>
@@ -56,7 +56,6 @@
   export default {
     data() {
       return {
-        imgprefix: 'http://ww3.sinaimg.cn/mw600/',
         loading: false,
         show: false,
         problem: {},
