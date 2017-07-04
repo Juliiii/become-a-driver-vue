@@ -1,3 +1,10 @@
+
+/**
+ * get the selectitems of some problem 
+ * 
+ * @param {object} json the data of problem in the type JSON
+ * @returns {object} option the option of the problem, such as selectitems
+ */
 function initcheckbox(json) {
   let option = [];
 
@@ -41,11 +48,17 @@ function initcheckbox(json) {
   return option;
 }
 
-function update(index) {
+/**
+ * get the data in JSON of some problem
+ * 
+ * @param {number} problemId
+ * @returns the data in JSON of some problem
+ */
+function update(problemId) {
   return new Promise((resolve, reject) => {
     let params = {
       r: Math.random(),
-      index: index,
+      index: problemId
     }
     let str = '';
     for (var key in params) {
@@ -64,6 +77,12 @@ function update(index) {
   });
 }
 
+/**
+ * get the answer of some problem
+ * 
+ * @param {any} json the data in JSON of this problem
+ * @returns the answer
+ */
 function computeAnswer(json) {
   if (json['Type'] === '1') {
     switch (json['ta']) {
@@ -80,34 +99,21 @@ function computeAnswer(json) {
   }
 }
 
+/**
+ * deep clone
+ * 
+ * @param {any} json the target object 
+ * @returns the copy of the object
+ */
 function deepclone(json) {
   return JSON.parse(JSON.stringify(json));
 }
 
 
 
-class storage {
-  constructor() {
-    this.store = window.localStorage;
-  }
-
-  save(key, value) {
-    this.store.setItem(key, value);
-  }
-
-  get(key) {
-    return this.store.getItem(key)
-  }
-
-  remove(key) {
-    this.store.removeItem(key);
-  }
-}
-
 export {
   update,
   initcheckbox,
   computeAnswer,
-  deepclone,
-  storage
+  deepclone
 }
