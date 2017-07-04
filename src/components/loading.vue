@@ -1,9 +1,11 @@
 <template>
-<div class="sk-folding-cube">
-  <div class="sk-cube1 sk-cube"></div>
-  <div class="sk-cube2 sk-cube"></div>
-  <div class="sk-cube4 sk-cube"></div>
-  <div class="sk-cube3 sk-cube"></div>
+<div class="sk-floding-cube-parent">
+  <div class="sk-folding-cube">
+    <div class="sk-cube1 sk-cube"></div>
+    <div class="sk-cube2 sk-cube"></div>
+    <div class="sk-cube4 sk-cube"></div>
+    <div class="sk-cube3 sk-cube"></div>
+  </div>
 </div>
 </template>
 
@@ -13,6 +15,12 @@ export default {
 </script>
 
 <style>
+.sk-floding-cube-parent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .sk-folding-cube {
 
   margin: 40px auto;
@@ -40,7 +48,7 @@ export default {
   left:0;
   width: 100%;
   height: 100%;
-  background-color: #333333;
+  background-color: #00c853;
   -webkit-animation:sk-foldCubeAngle 2.4s infinite linear both;
           animation:sk-foldCubeAngle 2.4s infinite linear both;
   -webkit-transform-origin:100% 100%;

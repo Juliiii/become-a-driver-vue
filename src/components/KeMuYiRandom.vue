@@ -7,7 +7,7 @@
       <mt-button slot="right" v-if="ready">{{current}}/{{total}}</mt-button>
     </mt-header>
 
-
+    <loading v-if="!ready" class="content"></loading>
     <div class="content" v-if="ready">
       <div class="question">
         <span v-if="currentinfo.Type === '1'">判断</span>
@@ -31,8 +31,7 @@
     </div>
 
 
-
-    <mt-tabbar :fixed="false" class="tabber" v-if="ready">
+    <mt-tabbar :fixed="false" class="tabber">
       <mt-tab-item @click.native.stop="pre">
         <img slot="icon" src="../icons/arrow-left.png">
         上一题
@@ -51,6 +50,7 @@
 <script>
   import { Toast, MessageBox } from 'mint-ui';
   import {initcheckbox, update, deepclone, storage, computeAnswer} from '../utils/utils'
+  import loading from './loading';
   export default {
     data() {
       return {
@@ -66,6 +66,9 @@
         storage: null,
         show1: false,
       }
+    },
+    components: {
+      loading
     },
     created() {
       this.init();
@@ -148,8 +151,12 @@
 
           try {
             this.currentinfo = deepclone(await update(temp));
-            this.value = this.ranstates[temp]
-            this.ready = true;
+            this.value = this.ranstates[temp];
+            let that = this;
+            setTimeout(function() {
+              that.ready = true;
+            }, 2000);
+            // this.ready = true;
           } catch (e) {}
         }
       },
