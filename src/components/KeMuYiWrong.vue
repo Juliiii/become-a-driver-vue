@@ -10,23 +10,23 @@
     <loading v-if="!loading" class="content"></loading>
     <div class="content" v-if="loading">
       <div class="question">
-        <span v-if="currentinfo.Type === '1'">判断</span>
+        <span v-if="problem.Type === '1'">判断</span>
         <span v-else>单选</span>
-        {{currentinfo.question}}
+        {{problem.question}}
       </div>
-      <img v-if="currentinfo.sinaimg" :src="imgprefix + currentinfo.sinaimg" class="image">
+      <img v-if="problem.sinaimg" :src="imgprefix + problem.sinaimg" class="image">
       <div class="item-group">
         <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)">
-          <div v-show="!value || (value != index + 1 && currentinfo.ta != index + 1)">{{o.index}}</div>
-          <img src="../icons/correct.png" alt="" v-if="value && currentinfo.ta == index + 1">
-          <img src="../icons/wrong.png" alt="" v-if="value && currentinfo.ta != value && value == index + 1">
+          <div v-show="!select || (select != index + 1 && problem.ta != index + 1)">{{o.index}}</div>
+          <img src="../icons/correct.png" alt="" v-if="select && problem.ta == index + 1">
+          <img src="../icons/wrong.png" alt="" v-if="select && problem.ta != select && select == index + 1">
           <div>{{o.label}}</div>
         </div>
       </div>
       <div class="explain" v-if="show || show">
         <p>最佳解释</p>
         <p>答案: {{answer}}</p>
-        <p>{{currentinfo.bestanswer}}</p>
+        <p>{{problem.bestanswer}}</p>
       </div>
     </div>
 
@@ -51,21 +51,20 @@
 
 <script>
   import { Toast, MessageBox } from 'mint-ui';
-  import {initcheckbox, update, deepclone, storage, computeAnswer} from '../utils/utils';
+  import {initcheckbox, update, deepclone, computeAnswer} from '../utils/utils';
   import loading from './loading';
   export default {
     data() {
       return {
         imgprefix: 'http://ww3.sinaimg.cn/mw600/',
         loading: false,
-        currentinfo: {},
+        show: false,
+        problem: {},
         current: 1,
-        storage: null,
         wrong: [],
-        value: '',
-        wrongstates: [],
-        deleterecord: [],
-        show: false
+        select: '',
+        states: [],
+        remove: []
       }
     },
     created() {
@@ -73,10 +72,10 @@
     },
     computed: {
       answer() {
-        return computeAnswer(this.currentinfo);
+        return computeAnswer(this.problem);
       },
       option() {
-        return initcheckbox(this.currentinfo);
+        return initcheckbox(this.problem);
       }
     },
     components: {
@@ -102,19 +101,18 @@
           return;
         }
         this.loading = false;
-        this.currentinfo = deepclone(await update(parseInt(this.wrong[val - 1])));
-        this.value = this.wrongstates[val - 1];
-        this.show = this.value ? (this.value !== this.currentinfo.ta) : false;
+        this.problem = deepclone(await update(parseInt(this.wrong[val - 1])));
+        this.select = this.states[val - 1];
+        this.show = this.select ? (this.select !== this.problem.ta) : false;
         setTimeout(() => this.loading = true, 500);       
       }
     },
     methods: {
       async init() {
-        this.storage = new storage();
-        let wrong = this.storage.get('wrong');
+        let wrong = localStorage.getItem('wrong');
         if (wrong) {
           this.wrong = wrong.split(',');
-          this.currentinfo = deepclone(await update(parseInt(this.wrong[this.current - 1])));
+          this.problem = deepclone(await update(parseInt(this.wrong[this.current - 1])));
           this.loading = true;
           } else {
           Toast({
@@ -124,11 +122,11 @@
           }
         },
       selectHandle (index) {
-        if (this.value) return;
-        this.value = index.toString();
-        this.wrongstates[this.current - 1] = this.value;
-        if (this.value == this.currentinfo.ta) {
-          this.deleterecord.push(this.current - 1);
+        if (this.select) return;
+        this.select = index.toString();
+        this.states[this.current - 1] = this.select;
+        if (this.select == this.problem.ta) {
+          this.remove.push(this.current - 1);
           this.current <= this.wrong.length && this.current++;
         } else {
           this.show = true;
@@ -139,9 +137,11 @@
       }
     },
     beforeDestroy() {
-      const arr = this.wrong.filter((val, index) => !this.deleterecord.includes(index));
+      const arr = this.wrong.filter((val, index) => !this.remove.includes(index));
+      // TODO
+      // if in remove, delete it in other items in localstorage
       const { length } = arr;
-      this.storage.save('wrong', length === 0 ? '' : arr);
+      localStorage.saveItem('wrong', length === 0 ? '' : arr);
     },
   }
 </script>
