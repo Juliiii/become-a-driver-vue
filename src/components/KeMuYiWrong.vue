@@ -140,7 +140,7 @@
       // TODO
       // if in remove, delete it in other items in localstorage
       const { length } = arr;
-      localStorage.saveItem('wrong', length === 0 ? '' : arr);
+      localStorage.setItem('wrong', length === 0 ? '' : arr);
     },
   }
 </script>

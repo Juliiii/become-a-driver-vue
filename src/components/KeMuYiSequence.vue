@@ -62,6 +62,7 @@
         select: '',
         loading: false,
         sqpstates: [],
+        show: false
       }
     },
     created () {
@@ -76,9 +77,6 @@
       },
       option () {
         return initcheckbox(this.currentinfo);
-      },
-      show () {
-        return this.select ? this.select !== this.currentinfo.ta : false;
       }
     },
     watch: {
@@ -111,6 +109,7 @@
         try {
           this.currentinfo = deepclone(await update(val));
           this.select = this.sqpstates[val - 1];
+          this.show = this.select ? this.select !== this.currentinfo.ta : false;
           localStorage.setItem('sqp_current', val);
           setTimeout(() => this.loading = true, 500);
         } catch (e) {}
@@ -139,12 +138,14 @@
           let data = await update(this.current);
           this.currentinfo = deepclone(data);
           this.select = this.sqpstates[this.current - 1];
+          this.show = this.select ? this.select !== this.currentinfo.ta : false;
           this.loading = true;
         } catch (e) {}
       },
       selectHandle(index) {
         if (this.select) return;
         this.select = index.toString();
+        this.show = this.select ? this.select !== this.currentinfo.ta : false;
         this.sqpstates[this.current - 1] = this.select;
         localStorage.setItem('sqp_states', this.sqpstates);
         if (this.select === this.currentinfo.ta) {

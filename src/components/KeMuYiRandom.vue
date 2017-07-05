@@ -4,26 +4,26 @@
       <router-link to="/" slot="left">
         <mt-button icon="back"></mt-button>
       </router-link>
-      <mt-button slot="right" v-if="ready">{{current}}/{{total}}</mt-button>
+      <mt-button slot="right">{{current}}/{{total}}</mt-button>
     </mt-header>
 
-    <loading v-if="!ready" class="content"></loading>
-    <div class="content" v-if="ready">
+    <loading v-if="!loading" class="content"></loading>
+    <div class="content" v-if="loading">
       <div class="question">
         <span v-if="currentinfo.Type === '1'">判断</span>
         <span v-else>单选</span>
         {{currentinfo.question}}
       </div>
-      <img v-if="currentinfo.sinaimg" :src="imgprefix + currentinfo.sinaimg" class="image">
+      <img v-if="currentinfo.sinaimg" :src="$imgPrefix + currentinfo.sinaimg" class="image">
       <div class="item-group">
-        <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)">
-          <div v-show="!value || (value != index + 1 && currentinfo.ta != index + 1)">{{o.index}}</div>
-          <img src="../icons/correct.png" alt="" v-if="value && currentinfo.ta == index + 1">
-          <img src="../icons/wrong.png" alt="" v-if="value && currentinfo.ta != value && value == index + 1">
+        <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)" :key="index">
+          <div v-show="!select || (select != index + 1 && currentinfo.ta != index + 1)">{{o.index}}</div>
+          <img src="../icons/correct.png" alt="" v-if="select && currentinfo.ta == index + 1">
+          <img src="../icons/wrong.png" alt="" v-if="select && currentinfo.ta != select && select == index + 1">
           <div>{{o.label}}</div>
         </div>
       </div>
-      <div class="explain" v-if="show || show1">
+      <div class="explain" v-if="show">
         <p>最佳解释</p>
         <p>答案: {{answer}}</p>
         <p>{{currentinfo.bestanswer}}</p>
@@ -32,15 +32,15 @@
 
 
     <mt-tabbar :fixed="false" class="tabber">
-      <mt-tab-item @click.native.stop="pre">
+      <mt-tab-item @click.native.stop="current >= 1 && current--">
         <img slot="icon" src="../icons/arrow-left.png">
         上一题
       </mt-tab-item>
-      <mt-tab-item @click.native.stop="next">
+      <mt-tab-item @click.native.stop="current <= total && current++">
         <img slot="icon" src="../icons/arrow-right.png">
         下一题
       </mt-tab-item>
-      <mt-tab-item @click.native.stop="showexplain">
+      <mt-tab-item @click.native.stop="show = !show">
         <img slot="icon" src="../icons/help.png">
         本题解释
       </mt-tab-item>
@@ -49,22 +49,19 @@
 </template>
 <script>
   import { Toast, MessageBox } from 'mint-ui';
-  import {initcheckbox, update, deepclone, storage, computeAnswer} from '../utils/utils'
+  import {initcheckbox, update, deepclone, computeAnswer} from '../utils/utils'
   import loading from './loading';
   export default {
     data() {
       return {
-        imgprefix: 'http://ww3.sinaimg.cn/mw600/',
         current: 1,
         total: 1330,
         currentinfo: {},
-        value: '',
-        ready: false,
+        select: '',
+        loading: false,
+        show: false,
         ranstates: [],
-        ranrecord: [],
-        sinaimg: '',
-        storage: null,
-        show1: false,
+        ranRecord: []
       }
     },
     components: {
@@ -79,127 +76,108 @@
       },
       answer() {
         return computeAnswer(this.currentinfo);
-      },
-      show() {
-        if (!this.value) return false
-        return !(this.value == this.currentinfo.ta)
+      }
+    },
+    watch: {
+      async current (val, oldVal) {
+        if (oldVal === this.total + 1 || oldVal === 0) return;
+        if (val === this.total + 1) {
+          Toast({
+            message: '已经最后一题了',
+            position: 'top',
+          });
+          this.current = this.total;
+          return;
+        }
+
+        if (val === 0) {
+           Toast({
+            message: '已经第一题了',
+            position: 'top',
+          });
+          this.current = 1;
+          return;   
+        }
+        let problemId;
+        let storage = window.localStorage;
+        storage.setItem('ran', val);
+        if (val > this.ranRecord.length) {
+          problemId = this.rand() + 1;
+          this.ranRecord.push(problemId);
+          storage.setItem('ran_record', this.ranRecord);
+        } else {
+          problemId = parseInt(this.ranRecord[val - 1]);
+        }
+
+        this.loading = false;
+        try {
+          this.currentinfo = deepclone(await update(problemId));
+          this.select = this.ranstates[problemId];
+          this.show = this.select ? this.select !== this.currentinfo.ta : false;
+          setTimeout(() => this.loading = true, 500);
+        } catch (e) {}
       }
     },
     methods: {
       async init() {
-        this.storage = new storage();
-        let current   = this.storage.get('ran'),
-            ranrecord = this.storage.get('ranrecord'),
-            ranstates = this.storage.get('ranstates'),
-            flag      = false;
-        if (ranstates) {
-          this.ranstates = ranstates.split(',');
-        }
-        if (ranrecord) {
-          this.ranrecord = ranrecord.split(',');
-        }
+        let storage   = window.localStorage;
+        let current   = storage.getItem('ran');
+        let ranRecord = storage.getItem('ran_record');
+        let ranstates = storage.getItem('ran_states');
+        this.ranstates = ranstates ? ranstates.split(',') : [];
+        this.ranRecord = ranRecord ? ranRecord.split(',') : [];
+
         if (current) {
           this.current = parseInt(current);
-          flag = !flag;
-        } else {
-          this.current = 1;
-          this.ranrecord[this.current - 1] = this.rand() + 1;
-          this.storage.save('ran', this.current);
-          this.storage.save('ranrecord', this.ranrecord);
-        }
-
-        try {
-          console.log(this.ranrecord[this.current - 1]);
-          this.currentinfo = deepclone(await update(parseInt(this.ranrecord[this.current-1])));
-          this.value = this.ranstates[this.ranrecord[this.current-1]];
-          this.ready = true;
-        } catch (e) {
-          console.log(e);
-        }
-
-        if (flag) {
           Toast({
             message: '已经自动回到上次答题位置',
             position: 'top',
-          })
+          });
+        } else {
+          this.current = 1;
+          this.ranRecord[this.current - 1] = this.rand() + 1;
+          storage.setItem('ran', this.current);
+          storage.setItem('ran_record', this.ranRecord);
         }
+
+        try {
+          this.currentinfo = deepclone(await update(parseInt(this.ranRecord[this.current - 1])));
+          this.select = this.ranstates[this.ranRecord[this.current - 1]];
+          this.show = this.select ? this.select !== this.currentinfo.ta : false;
+          setTimeout(() => this.loading = true, 500);
+        } catch (e) {}
       },
-      rand() {
+      rand () {
         let num, exist;
         do {
           num = Math.floor(Math.random() * this.total);
-          exist = this.ranrecord.indexOf(num + '') !== -1 ? false : true;
-        } while (!exist)
+          exist = this.ranRecord.indexOf(num + '') !== -1;
+        } while (exist)
         return num;
       },
-      async next() {
-        this.value = '';
-        this.ready = this.show1 = false;
-        if (this.current === this.total - 1) {
-          alert('最后一题了，逗逼')
-        } else {
+      selectHandle (index) {
+        if (this.select) return;
+        let storage = window.localStorage;
+        this.select = index.toString();
+        this.show = this.select ? this.select !== this.currentinfo.ta : false;
+        this.ranstates[parseInt(this.ranRecord[this.current - 1])] = this.select;
+        storage.setItem('ran_states', this.ranstates);
+        if (this.select == this.currentinfo.ta) {
           this.current++;
-          this.storage.save('ran', this.current);
-          let temp;
-          if (this.current > this.ranrecord.length) {
-            temp = this.rand() + 1;
-            this.ranrecord.push(temp);
-            this.storage.save('ranrecord', this.ranrecord);
-          } else {
-            temp = parseInt(this.ranrecord[this.current - 1]);
-          }
-
-          try {
-            this.currentinfo = deepclone(await update(temp));
-            this.value = this.ranstates[temp];
-            setTimeout(() => this.ready = true, 500);
-          } catch (e) {}
-        }
-      },
-      async pre() {
-        this.value = '';
-        this.ready = this.show1 = false;
-        if (this.current === 1) {
-          Toast({
-            message: '已经第一题了',
-            position: 'top'
-          })
         } else {
-          this.current--;
-          this.storage.save('ran', this.current);
-
-          try {
-            this.currentinfo = deepclone(await update(parseInt(this.ranrecord[this.current - 1])));
-            this.value = this.ranstates[this.ranrecord[this.current - 1]];
-            setTimeout(() => this.ready = true, 500);
-          } catch (e) {}
-        }
-      },
-      selectHandle(index) {
-        if (this.value)
-          return;
-        this.value = index.toString();
-        this.ranstates[parseInt(this.ranrecord[this.current - 1])] = this.value;
-        this.storage.save('ranstates', this.ranstates);
-        if (this.value == this.currentinfo.ta) {
-          this.next();
-        } else {
-          let wrong = this.storage.get('wrong');
+          let wrong = storage.getItem('wrong');
           if (wrong) {
             wrong = wrong.split(',');
             if (wrong.indexOf(this.current + '') === -1) {
               wrong.push(this.current);
-              this.storage.save('wrong', wrong);
+              storage.setItem('wrong', wrong);
             }
           } else {
             wrong = [],
             wrong.push(this.current);
-            this.storage.save('wrong', wrong);
+            storage.setItem('wrong', wrong);
           }
         }
-      },
-      showexplain() {
-        this.show1 = !this.show1;
       }
     },
   }

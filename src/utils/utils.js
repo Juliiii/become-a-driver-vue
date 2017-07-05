@@ -70,7 +70,6 @@ function update(problemId) {
                 return res.json();
               })
               .then(data => {
-                console.log(data);
                 resolve(data);
               })
               .catch(err => {});
