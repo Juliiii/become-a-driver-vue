@@ -110,9 +110,20 @@ function deepclone(json) {
 
 
 
+/**
+ * convert a string to an array
+ * 
+ * @param {any} str a str with the format of array  
+ * @returns an array
+ */
+function convert2Array(str) {
+  return str ? str.split(',') : [];
+}
+
 export {
   update,
   initcheckbox,
   computeAnswer,
-  deepclone
+  deepclone,
+  convert2Array
 }

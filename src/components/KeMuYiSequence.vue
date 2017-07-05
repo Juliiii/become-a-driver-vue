@@ -51,7 +51,7 @@
 
 <script>
   import { Toast, MessageBox } from 'mint-ui';
-  import { update, initcheckbox, computeAnswer, deepclone } from '../utils/utils';
+  import { update, initcheckbox, computeAnswer, deepclone, convert2Array } from '../utils/utils';
   import loading from './loading';
   export default {
     data() {
@@ -121,7 +121,7 @@
         let current   = localStorage.getItem('sqp_current'),
             sqpstates = localStorage.getItem('sqp_states');
         if (sqpstates) {
-          this.sqpstates = sqpstates.split(',');
+          this.sqpstates = convert2Array(sqpstates);
         }
         if (current) {
           this.current = parseInt(current);
@@ -153,7 +153,7 @@
         } else {
           let wrong = localStorage.getItem('wrong');
           if (wrong) {
-            wrong = wrong.split(',');
+            wrong = convert2Array(wrong);
             if (wrong.indexOf(this.current + '') === -1) {
               wrong.push(this.current);
               localStorage.setItem('wrong', wrong);

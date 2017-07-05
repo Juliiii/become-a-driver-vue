@@ -51,7 +51,7 @@
 
 <script>
   import { Toast, MessageBox } from 'mint-ui';
-  import {initcheckbox, update, deepclone, computeAnswer} from '../utils/utils';
+  import {initcheckbox, update, deepclone, computeAnswer, convert2Array} from '../utils/utils';
   import loading from './loading';
   export default {
     data() {
@@ -110,7 +110,7 @@
       async init() {
         let wrong = localStorage.getItem('wrong');
         if (wrong) {
-          this.wrong = wrong.split(',');
+          this.wrong = convert2Array(wrong);
           this.problem = deepclone(await update(parseInt(this.wrong[this.current - 1])));
           this.loading = true;
           } else {
@@ -136,12 +136,26 @@
       }
     },
     beforeDestroy() {
-      const arr = this.wrong.filter((val, index) => !this.remove.includes(index));
-      // TODO
-      // if in remove, delete it in other items in localstorage
+      let storage = window.localStorage;
+      let arr = this.wrong.filter((val, index) => !this.remove.includes(index));
       const { length } = arr;
-      localStorage.setItem('wrong', length === 0 ? '' : arr);
-    },
+      storage.setItem('wrong', length === 0 ? '' : arr);
+      let ranStates = storage.getItem('ran_states');
+      let ranRecord = storage.getItem('ran_record');
+      let seqStates = storage.getItem('sqp_states');
+
+      ranStates = convert2Array(ranStates);
+      ranRecord = convert2Array(ranRecord);
+      seqStates = convert2Array(seqStates);
+
+      seqStates = seqStates.filter((val, index) => !this.remove.includes(index));
+      this.remove.map(val => ranStates[val] = null);
+      ranRecord = ranRecord.filter(val => !this.ramove.includes(val));
+
+      storage.setItem('ran_states', ranStates.length ? ranStates : '');
+      storage.setItem('ran_record', ranRecord.length ? ranRecord : '');
+      storage.setItem('sqp_states', seqStates.length ? seqStates : '');
+    }
   }
 </script>
 

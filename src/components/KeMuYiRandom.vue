@@ -49,7 +49,7 @@
 </template>
 <script>
   import { Toast, MessageBox } from 'mint-ui';
-  import {initcheckbox, update, deepclone, computeAnswer} from '../utils/utils'
+  import {initcheckbox, update, deepclone, computeAnswer, convert2Array} from '../utils/utils'
   import loading from './loading';
   export default {
     data() {
@@ -60,7 +60,7 @@
         select: '',
         loading: false,
         show: false,
-        ranstates: [],
+        ranStates: [],
         ranRecord: []
       }
     },
@@ -112,7 +112,7 @@
         this.loading = false;
         try {
           this.currentinfo = deepclone(await update(problemId));
-          this.select = this.ranstates[problemId];
+          this.select = this.ranStates[problemId];
           this.show = this.select ? this.select !== this.currentinfo.ta : false;
           setTimeout(() => this.loading = true, 500);
         } catch (e) {}
@@ -123,9 +123,9 @@
         let storage   = window.localStorage;
         let current   = storage.getItem('ran');
         let ranRecord = storage.getItem('ran_record');
-        let ranstates = storage.getItem('ran_states');
-        this.ranstates = ranstates ? ranstates.split(',') : [];
-        this.ranRecord = ranRecord ? ranRecord.split(',') : [];
+        let ranStates = storage.getItem('ran_states');
+        this.ranStates = convert2Array(ranStates);
+        this.ranRecord = convert2Array(ranRecord);
 
         if (current) {
           this.current = parseInt(current);
@@ -142,7 +142,7 @@
 
         try {
           this.currentinfo = deepclone(await update(parseInt(this.ranRecord[this.current - 1])));
-          this.select = this.ranstates[this.ranRecord[this.current - 1]];
+          this.select = this.ranStates[this.ranRecord[this.current - 1]];
           this.show = this.select ? this.select !== this.currentinfo.ta : false;
           setTimeout(() => this.loading = true, 500);
         } catch (e) {}
@@ -160,14 +160,14 @@
         let storage = window.localStorage;
         this.select = index.toString();
         this.show = this.select ? this.select !== this.currentinfo.ta : false;
-        this.ranstates[parseInt(this.ranRecord[this.current - 1])] = this.select;
-        storage.setItem('ran_states', this.ranstates);
+        this.ranStates[parseInt(this.ranRecord[this.current - 1])] = this.select;
+        storage.setItem('ran_states', this.ranStates);
         if (this.select == this.currentinfo.ta) {
           this.current++;
         } else {
           let wrong = storage.getItem('wrong');
           if (wrong) {
-            wrong = wrong.split(',');
+            wrong = convert2Array(wrong);
             if (wrong.indexOf(this.current + '') === -1) {
               wrong.push(this.current);
               storage.setItem('wrong', wrong);
