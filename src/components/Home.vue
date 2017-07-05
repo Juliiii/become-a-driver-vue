@@ -2,7 +2,12 @@
   <div class="container">
     <h2>科目一</h2>
     <div>
-      <mt-button type="primary" class="button" v-for = "(b, index) in buttons" :data="b" :key="b" @click="clickhandle(index)">{{b}}</mt-button>
+      <mt-button type="primary" 
+                 class="button" 
+                 v-for="(button,index) in buttons" 
+                 :data="button" 
+                 :key="index"
+                 @click="clickhandle(index)">{{button}}</mt-button>
     </div>
   </div>
 </template>

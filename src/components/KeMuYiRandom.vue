@@ -43,7 +43,7 @@
       <mt-tab-item @click.native.stop="show = !show">
         <img slot="icon" src="../icons/help.png">
         本题解释
-      </mt-tab-item>
+      </mt-tab-item>  
     </mt-tabbar>
   </div>
 </template>

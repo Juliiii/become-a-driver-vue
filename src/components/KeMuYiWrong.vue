@@ -16,7 +16,7 @@
       </div>
       <img v-if="problem.sinaimg" :src="$imgPrefix + problem.sinaimg" class="image">
       <div class="item-group">
-        <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)">
+        <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)" :key="index">
           <div v-show="!select || (select != index + 1 && problem.ta != index + 1)">{{o.index}}</div>
           <img src="../icons/correct.png" alt="" v-if="select && problem.ta == index + 1">
           <img src="../icons/wrong.png" alt="" v-if="select && problem.ta != select && select == index + 1">
