@@ -49,7 +49,7 @@
 </template>
 <script>
   import { Toast, MessageBox } from 'mint-ui';
-  import {initcheckbox, update, deepclone, computeAnswer, convert2Array} from '../utils/utils'
+  import {initcheckbox, update, deepclone, computeAnswer, convert2Array} from '../utils/utils';
   import loading from './loading';
   export default {
     data() {
