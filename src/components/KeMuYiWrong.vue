@@ -113,13 +113,13 @@
           this.wrong = convert2Array(wrong);
           this.problem = deepclone(await update(parseInt(this.wrong[this.current - 1])));
           this.loading = true;
-          } else {
+        } else {
           Toast({
             message: "没有错题噢",
             position: "top"
           });
           }
-        },
+      },
       selectHandle (index) {
         if (this.select) return;
         this.select = index.toString();
@@ -147,10 +147,10 @@
       ranStates = convert2Array(ranStates);
       ranRecord = convert2Array(ranRecord);
       seqStates = convert2Array(seqStates);
-
+      console.log(this.remove);
       seqStates = seqStates.filter((val, index) => !this.remove.includes(index));
       this.remove.map(val => ranStates[val] = null);
-      ranRecord = ranRecord.filter(val => !this.ramove.includes(val));
+      ranRecord = ranRecord.filter(val => !this.remove.includes(val));
 
       storage.setItem('ran_states', ranStates.length ? ranStates : '');
       storage.setItem('ran_record', ranRecord.length ? ranRecord : '');

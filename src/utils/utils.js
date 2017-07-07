@@ -120,10 +120,33 @@ function convert2Array(str) {
   return str ? str.split(',') : [];
 }
 
+
+function touchStart (event) {
+  this.startX =  event.targetTouches[0].pageX;
+}
+
+function touchMove (event) {
+  // event.preventDefault();
+  this.endX = event.targetTouches[0].pageX;
+}
+
+function touchEnd (event) {
+  if (this.endX >= this.startX) {
+    this.current--;
+  } else {
+    this.current++;
+  }
+}
+
+
+
 export {
   update,
   initcheckbox,
   computeAnswer,
   deepclone,
-  convert2Array
+  convert2Array,
+  touchEnd,
+  touchMove,
+  touchStart
 }

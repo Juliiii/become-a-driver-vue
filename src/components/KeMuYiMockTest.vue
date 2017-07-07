@@ -1,7 +1,7 @@
 <template>
   <div class="parent">
     <mt-header :title="title" class="header">
-      <mt-button icon="back" slot="left"></mt-button>
+      <mt-button icon="back" slot="left" @click="back"></mt-button>
       <span slot="right" class="cell">{{time}}</span>
     </mt-header>
 
@@ -23,14 +23,15 @@
       </div>
     </div>
     <div class="bottom">
-      <mt-button type="primary" class="submit" size="large">交卷</mt-button>
+      <mt-button type="primary" class="submit" size="large" @click="handIn">交卷</mt-button>
     </div>
   </div>
 </template>
 
 <script>
-  import {initcheckbox, update, deepclone, convert2Array} from '@/utils/utils';
+  import {initcheckbox, update, deepclone, convert2Array, touchEnd, touchMove, touchStart} from '@/utils/utils';
   import { MessageBox } from 'mint-ui';
+  import loading from './loading';
   export default {
     data() {
       return {
@@ -48,6 +49,9 @@
         score: 0
       }
     },
+    components: {
+      loading
+    },
     computed: {
       title () {
         return `${this.current}/${this.total}`;
@@ -63,9 +67,12 @@
     },
     created () {
       this.storage = window.localStorage;
-      this.minutes = parseInt(this.storage.getItem('minutes'));
-      this.seconds = parseInt(this.storage.getItem('seconds'));
+      const minutes = this.storage.getItem('minutes');
+      const seconds = this.storage.getItem('seconds');
       const score = this.storage.getItem('score');
+      console.log(minutes, seconds);
+      this.minutes = minutes ? parseInt(minutes) : 45;
+      this.seconds = seconds ? parseInt(seconds) : 0;
       this.score = score ? parseInt(score) : 0;
       this.timeId = setInterval(() => {
         this.seconds--;
@@ -82,7 +89,16 @@
         this.storage.setItem('seconds', this.seconds);
       }, 1000);
 
+      window.addEventListener('touchstart', touchStart.bind(this));
+      window.addEventListener('touchmove', touchMove.bind(this));
+      window.addEventListener('touchend', touchEnd.bind(this));
+
       this.init();
+    },
+    destroyed () {
+      window.removeEventListener('touchstart', touchStart.bind(this));
+      window.removeEventListener('touchmove', touchMove.bind(this));
+      window.removeEventListener('touchend', touchEnd.bind(this));
     },
     watch: {
       async current (val, oldVal) {
@@ -101,7 +117,7 @@
         this.loading = false;
         this.storage.setItem('mock', val);
         try {
-          this.currentInfo = (await update(parseInt(this.record[this.current - 1]))).data;
+          this.currentInfo = await update(parseInt(this.record[this.current - 1]));
           this.select = this.states[this.current - 1];
           setTimeout(() => this.loading = true, 300);
         } catch (ex) {}
@@ -118,13 +134,15 @@
           }
 
           this.storage.setItem('mock_record', this.record);
+          this.storage.setItem('mock', this.current);
         } else {
           this.record = convert2Array(arr);
           this.current = parseInt(this.storage.getItem('mock'));
         }
         try {
-          this.currentInfo = (await update(this.current)).data;
+          this.currentInfo = await update(parseInt(this.record[this.current - 1]));
           this.select = this.states[this.current - 1];
+          console.log(this.currentInfo);
           setTimeout(() => this.loading = true, 300);
         } catch (ex) {}
 
@@ -141,8 +159,8 @@
       },
       selectHandle (index) {
         if (this.select) return;
+        this.select = index;
         index = index.toString();
-        this.select = index + 1;
         this.states[this.current - 1] = this.select;
         if (index !== this.currentInfo.ta) {
           let wrong = this.storage.getItem('wrong');
@@ -171,7 +189,22 @@
         } catch (e) {}
         if (action === 'confirm') {
           alert(this.score);
+          this.removeItems();
         }
+      },
+      clearAll (arg) {
+        arg.forEach((element) => 
+          this.storage.removeItem(element)
+        );
+      },
+      removeItems () {
+        clearInterval(this.timeId);
+        const arr = ['minutes', 'seconds', 'mock', 'mock_record', 'mock_states', 'score'];
+        this.clearAll(arr);
+      },
+      back () {
+        this.removeItems();
+        this.$router.push('/');
       }
     }
   }
