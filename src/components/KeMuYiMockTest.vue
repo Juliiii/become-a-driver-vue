@@ -30,6 +30,7 @@
 
 <script>
   import {initcheckbox, update, deepclone, convert2Array} from '@/utils/utils';
+  import { MessageBox } from 'mint-ui';
   export default {
     data() {
       return {
@@ -42,7 +43,8 @@
         seconds: 0,
         record: [],
         states: [],
-        timeId: null
+        timeId: null,
+        storage: null
       }
     },
     computed: {
@@ -59,6 +61,9 @@
       }
     },
     created () {
+      this.storage = window.localStorage;
+      this.minutes = parseInt(this.storage.getItem('minutes'));
+      this.seconds = parseInt(this.storage.getItem('seconds'));
       this.timeId = setInterval(() => {
         this.seconds--;
         if (this.seconds === 0 && this.minutes === 0) {
@@ -70,27 +75,54 @@
           this.minutes--;
           this.seconds = 59;
         }
+        this.storage.setItem('minutes', this.minutes);
+        this.storage.setItem('seconds', this.seconds);
       }, 1000);
+
+      this.init();
+    },
+    watch: {
+      async current (val, oldVal) {
+        if (oldVal === this.total + 1 || oldVal === 0) return;
+        if (val === this.total + 1) {
+          //TODO 是否交卷
+          await this.handIn();
+          this.current = this.total;
+          return;
+        }
+
+        if (val === 0) {
+          this.current = 1;
+          return;
+        }
+        this.loading = false;
+        this.storage.setItem('mock', val);
+        try {
+          this.currentInfo = (await update(parseInt(this.record[this.current - 1]))).data;
+          this.select = this.states[this.current - 1];
+          setTimeout(() => this.loading = true, 300);
+        } catch (ex) {}
+      }
     },
     methods: {
       async init () {
-        let storage = window.localStorage;
-        const arr = storage.getItem('mock_record');
-        const states = storage.getItem('mock_states');
-        this.states = states ? states.split(',') : [];
+        const arr = this.storage.getItem('mock_record');
+        const states = this.storage.getItem('mock_states');
+        this.states = convert2Array(states);
         if (!arr) {
           for (let i = 0; i < 100; i++) {
             this.record.push(this.rand() + 1);
           }
 
-          storage.setItem('mock_record', this.record);
+          this.storage.setItem('mock_record', this.record);
         } else {
-          this.record = arr.split(',');
-          this.current = parseInt(storage.getItem('mock'));
+          this.record = convert2Array(arr);
+          this.current = parseInt(this.storage.getItem('mock'));
         }
         try {
           this.currentInfo = (await update(this.current)).data;
           this.select = this.states[this.current - 1];
+          setTimeout(() => this.loading = true, 300);
         } catch (ex) {}
 
       },
@@ -106,10 +138,32 @@
       },
       selectHandle (index) {
         if (this.select) return;
-        let storage = window.localStorage;
         index = index.toString();
+        this.select = index + 1;
+        this.states[this.current - 1] = this.select;
         if (index !== this.currentInfo.ta) {
-          
+          let wrong = this.storage.getItem('wrong');
+          const problemId = this.record[this.current - 1].toString();
+          wrong = convert2Array(wrong);
+          if (wrong.length) {
+            if (!wrong.includes(problemId)) {
+              wrong.push(problemId);
+              this.storage.setItem('wrong', wrong);
+            }
+          } else {
+            wrong = [];
+            wrong.push(problemId);
+            this.storage.setItem('wrong', wrong);
+          }
+        }
+        setTimeout(() => this.current++, 300);
+      },
+      async handIn () {
+        let action = '';
+        try {
+          action = await MessageBox.confirm(`交卷?`);
+        } catch (e) {}
+        if (action === 'confirm') {
         }
       }
     }
