@@ -51,7 +51,7 @@
 
 <script>
   import { Toast, MessageBox } from 'mint-ui';
-  import {initcheckbox, update, deepclone, computeAnswer, convert2Array} from '../utils/utils';
+  import {initcheckbox, update, deepclone, computeAnswer, convert2Array, touchEnd, touchMove, touchStart} from '../utils/utils';
   import loading from './loading';
   export default {
     data() {
@@ -66,8 +66,16 @@
         remove: []
       }
     },
-    created() {
+    created () {
+      window.addEventListener('touchstart', touchStart.bind(this));
+      window.addEventListener('touchmove', touchMove.bind(this));
+      window.addEventListener('touchend', touchEnd.bind(this));
       this.init();
+    },
+    destroyed() {
+      window.removeEventListener('touchstart', touchStart.bind(this));
+      window.removeEventListener('touchmove', touchMove.bind(this));
+      window.removeEventListener('touchend', touchEnd.bind(this));
     },
     computed: {
       answer() {

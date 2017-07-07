@@ -131,11 +131,14 @@ function touchMove (event) {
 }
 
 function touchEnd (event) {
-  if (this.endX >= this.startX) {
+  if (this.endX === null) return;
+  if (this.endX > this.startX + 10) {
     this.current--;
-  } else {
+  } else if (this.endX < this.startX - 10){
     this.current++;
   }
+  this.startX = null;
+  this.endX = null;
 }
 
 
