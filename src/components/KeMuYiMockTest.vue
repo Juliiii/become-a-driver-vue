@@ -44,7 +44,8 @@
         record: [],
         states: [],
         timeId: null,
-        storage: null
+        storage: null,
+        score: 0
       }
     },
     computed: {
@@ -64,6 +65,8 @@
       this.storage = window.localStorage;
       this.minutes = parseInt(this.storage.getItem('minutes'));
       this.seconds = parseInt(this.storage.getItem('seconds'));
+      const score = this.storage.getItem('score');
+      this.score = score ? parseInt(score) : 0;
       this.timeId = setInterval(() => {
         this.seconds--;
         if (this.seconds === 0 && this.minutes === 0) {
@@ -155,6 +158,9 @@
             wrong.push(problemId);
             this.storage.setItem('wrong', wrong);
           }
+        } else {
+          this.score++;
+          this.storage.setItem('score', this.score);
         }
         setTimeout(() => this.current++, 300);
       },
@@ -164,6 +170,7 @@
           action = await MessageBox.confirm(`交卷?`);
         } catch (e) {}
         if (action === 'confirm') {
+          alert(this.score);
         }
       }
     }
