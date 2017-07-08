@@ -1,6 +1,6 @@
 # jiaxiaobaodian
 
-> A webapp creatd by Vue
+> 科目一的刷题app,有顺序做题，随机做题，错题本和模拟测试四个功能
 ## Build Setup
 
 ``` bash
