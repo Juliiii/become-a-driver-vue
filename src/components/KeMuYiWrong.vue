@@ -4,7 +4,7 @@
       <router-link to="/" slot="left">
         <mt-button icon="back"></mt-button>
       </router-link>
-      <mt-button slot="right">{{current}}/{{wrong.length}}</mt-button>
+      <mt-button slot="right" v-if="wrong.length">{{current}}/{{wrong.length}}</mt-button>
     </mt-header>
 
     <loading v-if="!loading" class="content"></loading>
@@ -62,8 +62,7 @@
         current: 1,
         wrong: [],
         select: '',
-        states: [],
-        remove: []
+        states: []
       }
     },
     created () {
@@ -133,36 +132,37 @@
         this.select = index.toString();
         this.states[this.current - 1] = this.select;
         if (this.select == this.problem.ta) {
-          this.remove.push(this.current - 1);
+          // this.remove.push(this.current - 1);
+          this.removeTrueItem(this.current - 1);
           this.current <= this.wrong.length && this.current++;
         } else {
           this.show = true;
         }
       },
-      showexplain () {
-        this.show = !this.show;
+      removeTrueItem (targetIndex) {
+        let storage = window.localStorage;
+        let ranStates = storage.getItem('ran_states');
+        let ranRecord = storage.getItem('ran_record');
+        let seqStates = storage.getItem('sqp_states');
+        let wrong = storage.getItem('wrong');
+
+        const target = this.wrong[targetIndex];
+
+        ranStates = convert2Array(ranStates);
+        ranRecord = convert2Array(ranRecord);
+        seqStates = convert2Array(seqStates);
+        wrong = convert2Array(wrong);
+
+        seqStates = seqStates.map((val, index) => index != target ? val : null);
+        ranStates[parseInt(target)] = null;
+        ranRecord = ranRecord.filter(val => target != val);
+        let arr = wrong.filter((val, index) => val !== target);
+
+        storage.setItem('wrong', arr.length === 0 ? '' : arr);
+        storage.setItem('ran_states', ranStates.length ? ranStates : '');
+        storage.setItem('ran_record', ranRecord.length ? ranRecord : '');
+        storage.setItem('sqp_states', seqStates.length ? seqStates : '');        
       }
-    },
-    beforeDestroy() {
-      let storage = window.localStorage;
-      let arr = this.wrong.filter((val, index) => !this.remove.includes(index));
-      const { length } = arr;
-      storage.setItem('wrong', length === 0 ? '' : arr);
-      let ranStates = storage.getItem('ran_states');
-      let ranRecord = storage.getItem('ran_record');
-      let seqStates = storage.getItem('sqp_states');
-
-      ranStates = convert2Array(ranStates);
-      ranRecord = convert2Array(ranRecord);
-      seqStates = convert2Array(seqStates);
-      console.log(this.remove);
-      seqStates = seqStates.filter((val, index) => !this.remove.includes(index));
-      this.remove.map(val => ranStates[val] = null);
-      ranRecord = ranRecord.filter(val => !this.remove.includes(val));
-
-      storage.setItem('ran_states', ranStates.length ? ranStates : '');
-      storage.setItem('ran_record', ranRecord.length ? ranRecord : '');
-      storage.setItem('sqp_states', seqStates.length ? seqStates : '');
     }
   }
 </script>

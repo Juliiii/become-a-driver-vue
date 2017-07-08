@@ -189,7 +189,7 @@
         } catch (e) {}
         if (action === 'confirm') {
           alert(this.score);
-          this.removeItems();
+          this.back();
         }
       },
       clearAll (arg) {

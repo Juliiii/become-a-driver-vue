@@ -121,15 +121,31 @@ function convert2Array(str) {
 }
 
 
+/**
+ * touchstart callback
+ * 
+ * @param {any} event 
+ */
+
 function touchStart (event) {
   this.startX =  event.targetTouches[0].pageX;
 }
+
+/**
+ * touchmove callback
+ * 
+ * @param {any} event 
+ */
 
 function touchMove (event) {
   // event.preventDefault();
   this.endX = event.targetTouches[0].pageX;
 }
-
+/**
+ * touchend callback
+ * 
+ * @param {any} event 
+ */
 function touchEnd (event) {
   if (this.endX === null) return;
   if (this.endX > this.startX + 10) {
