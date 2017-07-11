@@ -6,55 +6,57 @@
   .header {
     background-color: #00c853 !important;
   }
-  .content {
+  .body {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     overflow: auto;
-    .image {
-      margin-top: 20px;
-      max-width: 90%;
-      max-height: 30%;
-    }
-    .question {
-      margin-top: 7%;
-      width: 90%;
-      span {
-        color: #d4e157;
-        font-size: 14px;
-        border-radius: 1px;
-        border: 1px solid #d4e157;
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .image {
+        margin-top: 20px;
+        max-width: 90%;
+        max-height: 30%;
       }
-    }
-    .item-group {
-      text-align: left;
-      width: 90%;
-      margin-top: 5%;
-      .item {
-        cursor: pointer;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        >:first-child {
-        display: inline-block;
-        height: 24px;
-        width: 24px;
-        line-height: 24px;
-        text-align: center;
-        font-size: 16px;
-        color: #999999;
-        border-radius: 50%;
-        border: 1px solid #dddddd;
+      .question {
+        margin-top: 7%;
+        width: 90%;
+        span {
+          color: #d4e157;
+          font-size: 14px;
+          border-radius: 1px;
+          border: 1px solid #d4e157;
         }
-        >:last-child {
+      }
+      .item-group {
+        text-align: left;
+        width: 90%;
+        margin-top: 5%;
+        .item {
+          cursor: pointer;
+          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          >:first-child {
           display: inline-block;
-          font-size: 16px;
-          margin-left: 10px;
-          }
-        img {
           height: 24px;
           width: 24px;
+          line-height: 24px;
+          text-align: center;
+          font-size: 16px;
+          color: #999999;
+          border-radius: 50%;
+          border: 1px solid #dddddd;
+          }
+          >:last-child {
+            display: inline-block;
+            font-size: 16px;
+            margin-left: 10px;
+            }
+          img {
+            height: 24px;
+            width: 24px;
+          }
         }
       }
     }

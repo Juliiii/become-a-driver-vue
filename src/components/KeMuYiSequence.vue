@@ -7,31 +7,16 @@
       <mt-button slot="right">{{current}}/{{total}}</mt-button>
     </mt-header>
 
-    <loading v-if="!loading" class="content"></loading>
-    <div class="content" v-if="loading">
-      <div class="question">
-        <span v-if="currentinfo.Type === '1'">判断</span>
-        <span v-else>单选</span>
-        {{currentinfo.question}}
-      </div>
-      <img v-if="currentinfo.sinaimg" :src="$imgPrefix + currentinfo.sinaimg" class="image">
-      <div class="item-group">
-        <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)" :key="index">
-          <div v-show="!select || (select != index + 1 && currentinfo.ta != index + 1)">{{o.index}}</div>
-          <img src="../icons/correct.png" alt="" v-if="select && currentinfo.ta == index + 1">
-          <img src="../icons/wrong.png" alt="" v-if="select && currentinfo.ta != select && select == index + 1">
-          <div>{{o.label}}</div>
-        </div>
-      </div>
-      <div class="explain" v-if="show">
-        <p>最佳解释</p>
-        <p>答案: {{answer}}</p>
-        <p>{{currentinfo.bestanswer}}</p>
-      </div>
+    <loading v-if="!loading" class="loading"></loading>
+    <div class="body">
+      <selects @onSelect="selectHandle" 
+              :currentInfo="currentinfo" 
+              :option="option"
+              v-if="loading"/>
+      <explain :bestanswer="currentinfo.bestanswer"
+               :answer="answer"
+               v-if="loading && show"/>
     </div>
-
-
-
     <mt-tabbar class="tabber" :fixed="false">
       <mt-tab-item @click.native.stop="current >= 1 && current--">
         <img slot="icon" src="../icons/arrow-left.png">
@@ -53,6 +38,8 @@
   import { Toast, MessageBox } from 'mint-ui';
   import { update, initcheckbox, computeAnswer, deepclone, convert2Array, touchEnd, touchMove, touchStart } from '../utils/utils';
   import loading from './loading';
+  import selects from './selects';
+  import explain from './explain';
   export default {
     data() {
       return {
@@ -77,7 +64,9 @@
       window.removeEventListener('touchend', touchEnd.bind(this));
     },
     components: {
-      loading
+      loading,
+      selects,
+      explain
     },
     computed: {
       answer () {
@@ -150,7 +139,8 @@
           this.loading = true;
         } catch (e) {}
       },
-      selectHandle(index) {
+      selectHandle({index}) {
+        console.log(index);
         if (this.select) return;
         this.select = index.toString();
         this.show = this.select ? this.select !== this.currentinfo.ta : false;
@@ -178,5 +168,5 @@
 </script>
 
 <style lang="scss">
-  @import "../scss/common.scss"
+  @import "../scss/common.scss";
 </style>

@@ -16,16 +16,17 @@ export default {
 
 <style>
 .sk-floding-cube-parent {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  margin-left: -25px;
+  margin-top: -25px;
 }
 .sk-folding-cube {
 
-  margin: 40px auto;
-  width:40px;
-  height: 40px;
+  margin: 50px auto;
+  width: 50px;
+  height: 50px;
   position: relative;
   -webkit-transform:rotateZ(45deg);
   transform: rotateZ(45deg);
