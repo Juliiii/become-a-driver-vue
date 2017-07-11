@@ -6,21 +6,11 @@
     </mt-header>
 
     <loading v-if="!loading" class="content"></loading>
-    <div class="content" v-if="loading">
-      <div class="question">
-        <span v-if="currentInfo.Type === '1'">判断</span>
-        <span v-else>单选</span>
-        {{currentInfo.question}}
-      </div>
-      <img v-if="currentInfo.sinaimg" :src="$imgPrefix + currentInfo.sinaimg" class="image">
-      <div class="item-group">
-        <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)" :key="index">
-          <div v-show="!select || (select != index + 1 && currentInfo.ta != index + 1)">{{o.index}}</div>
-          <img src="../icons/correct.png" alt="" v-if="select && currentInfo.ta == index + 1">
-          <img src="../icons/wrong.png" alt="" v-if="select && currentInfo.ta != select && select == index + 1">
-          <div>{{o.label}}</div>
-        </div>
-      </div>
+    <div class="body">
+      <selects @onSelect="selectHandle" 
+              :currentInfo="currentInfo" 
+              :option="option"
+              v-if="loading"/>
     </div>
     <div class="bottom">
       <mt-button type="primary" class="submit" size="large" @click="handIn">交卷</mt-button>
@@ -31,7 +21,8 @@
 <script>
   import {initcheckbox, update, deepclone, convert2Array, touchEnd, touchMove, touchStart} from '@/utils/utils';
   import { MessageBox } from 'mint-ui';
-  import loading from './loading';
+  import loading from '@/components/loading';
+  import selects from '@/components/selects';
   export default {
     data() {
       return {
@@ -50,6 +41,7 @@
       }
     },
     components: {
+      selects,
       loading
     },
     computed: {
@@ -142,7 +134,6 @@
         try {
           this.currentInfo = await update(parseInt(this.record[this.current - 1]));
           this.select = this.states[this.current - 1];
-          console.log(this.currentInfo);
           setTimeout(() => this.loading = true, 300);
         } catch (ex) {}
 
@@ -157,7 +148,7 @@
 
         return num;
       },
-      selectHandle (index) {
+      selectHandle ({index}) {
         if (this.select) return;
         this.select = index;
         index = index.toString();
@@ -177,6 +168,7 @@
             this.storage.setItem('wrong', wrong);
           }
         } else {
+          console.log('1');
           this.score++;
           this.storage.setItem('score', this.score);
         }

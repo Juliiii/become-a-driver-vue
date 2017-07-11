@@ -1,13 +1,11 @@
 <template>
   <div class="parent">
-    <mt-header title="顺序练习" class="header">
-      <router-link to="/" slot="left">
-        <mt-button icon="back"></mt-button>
-      </router-link>
-      <mt-button slot="right">{{current}}/{{total}}</mt-button>
-    </mt-header>
+    <myheader :current="current"
+            :total="total"
+            title="顺序练习"/>
 
     <loading v-if="!loading" class="loading"></loading>
+
     <div class="body">
       <selects @onSelect="selectHandle" 
               :currentInfo="currentinfo" 
@@ -17,29 +15,19 @@
                :answer="answer"
                v-if="loading && show"/>
     </div>
-    <mt-tabbar class="tabber" :fixed="false">
-      <mt-tab-item @click.native.stop="current >= 1 && current--">
-        <img slot="icon" src="../icons/arrow-left.png">
-        上一题
-      </mt-tab-item>
-      <mt-tab-item @click.native.stop="current <= total && current++">
-        <img slot="icon" src="../icons/arrow-right.png">
-        下一题
-      </mt-tab-item>
-      <mt-tab-item @click.native.stop="show = !show">
-        <img slot="icon" src="../icons/help.png">
-        本题解释
-      </mt-tab-item>
-    </mt-tabbar>
+
+    <tabbar @click="clickHandle"/>
   </div>
 </template>
 
 <script>
   import { Toast, MessageBox } from 'mint-ui';
   import { update, initcheckbox, computeAnswer, deepclone, convert2Array, touchEnd, touchMove, touchStart } from '../utils/utils';
-  import loading from './loading';
-  import selects from './selects';
-  import explain from './explain';
+  import loading from '@/components/loading';
+  import selects from '@/components/selects';
+  import explain from '@/components/explain';
+  import tabbar from '@/components/tabbar';
+  import myheader from '@/components/header';
   export default {
     data() {
       return {
@@ -66,7 +54,9 @@
     components: {
       loading,
       selects,
-      explain
+      explain,
+      tabbar,
+      myheader
     },
     computed: {
       answer () {
@@ -140,7 +130,6 @@
         } catch (e) {}
       },
       selectHandle({index}) {
-        console.log(index);
         if (this.select) return;
         this.select = index.toString();
         this.show = this.select ? this.select !== this.currentinfo.ta : false;
@@ -161,6 +150,13 @@
             wrong.push(this.current);
             localStorage.setItem('wrong', wrong);
           }
+        }
+      },
+      clickHandle ({type}) {
+        switch (type) {
+          case 'pre': this.current--; break;
+          case 'next': this.current++; break;
+          case 'explain': this.show = !this.show; break;
         }
       }
     }

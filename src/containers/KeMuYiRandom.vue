@@ -1,56 +1,33 @@
 <template>
   <div class="parent">
-    <mt-header title="随机练习" class="header">
-      <router-link to="/" slot="left">
-        <mt-button icon="back"></mt-button>
-      </router-link>
-      <mt-button slot="right">{{current}}/{{total}}</mt-button>
-    </mt-header>
+    <myheader :current="current"
+            :total="total"
+            title="随机练习"/>
 
-    <loading v-if="!loading" class="content"></loading>
-    <div class="content" v-if="loading">
-      <div class="question">
-        <span v-if="currentinfo.Type === '1'">判断</span>
-        <span v-else>单选</span>
-        {{currentinfo.question}}
-      </div>
-      <img v-if="currentinfo.sinaimg" :src="$imgPrefix + currentinfo.sinaimg" class="image">
-      <div class="item-group">
-        <div v-for="(o, index) in option" class="item" @click="selectHandle(index + 1)" :key="index">
-          <div v-show="!select || (select != index + 1 && currentinfo.ta != index + 1)">{{o.index}}</div>
-          <img src="../icons/correct.png" alt="" v-if="select && currentinfo.ta == index + 1">
-          <img src="../icons/wrong.png" alt="" v-if="select && currentinfo.ta != select && select == index + 1">
-          <div>{{o.label}}</div>
-        </div>
-      </div>
-      <div class="explain" v-if="show">
-        <p>最佳解释</p>
-        <p>答案: {{answer}}</p>
-        <p>{{currentinfo.bestanswer}}</p>
-      </div>
+    <loading v-if="!loading" class="loading"></loading>
+
+    <div class="body">
+      <selects @onSelect="selectHandle" 
+              :currentInfo="currentinfo" 
+              :option="option"
+              v-if="loading"/>
+      <explain :bestanswer="currentinfo.bestanswer"
+               :answer="answer"
+               v-if="loading && show"/>
     </div>
 
-
-    <mt-tabbar :fixed="false" class="tabber">
-      <mt-tab-item @click.native.stop="current >= 1 && current--">
-        <img slot="icon" src="../icons/arrow-left.png">
-        上一题
-      </mt-tab-item>
-      <mt-tab-item @click.native.stop="current <= total && current++">
-        <img slot="icon" src="../icons/arrow-right.png">
-        下一题
-      </mt-tab-item>
-      <mt-tab-item @click.native.stop="show = !show">
-        <img slot="icon" src="../icons/help.png">
-        本题解释
-      </mt-tab-item>  
-    </mt-tabbar>
+    <tabbar @click="clickHandle"/>
   </div>
 </template>
+
 <script>
   import { Toast, MessageBox } from 'mint-ui';
   import {initcheckbox, update, deepclone, computeAnswer, convert2Array, touchEnd, touchMove, touchStart} from '../utils/utils';
-  import loading from './loading';
+  import loading from '@/components/loading';
+  import selects from '@/components/selects';
+  import explain from '@/components/explain';
+  import tabbar from '@/components/tabbar';
+  import myheader from '@/components/header';
   export default {
     data() {
       return {
@@ -65,7 +42,11 @@
       }
     },
     components: {
-      loading
+      loading,
+      selects,
+      explain,
+      tabbar,
+      myheader
     },
     created () {
       window.addEventListener('touchstart', touchStart.bind(this));
@@ -163,7 +144,7 @@
         } while (exist)
         return num;
       },
-      selectHandle (index) {
+      selectHandle ({index}) {
         if (this.select) return;
         let storage = window.localStorage;
         this.select = index.toString();
@@ -185,6 +166,13 @@
             wrong.push(this.current);
             storage.setItem('wrong', wrong);
           }
+        }
+      },
+      clickHandle ({type}) {
+        switch (type) {
+          case 'pre': this.current--; break;
+          case 'next': this.current++; break;
+          case 'explain': this.show = !this.show; break;
         }
       }
     },

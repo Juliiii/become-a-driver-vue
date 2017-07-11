@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '../components/Home'
-import KeMuTpl from '../components/KeMuTpl'
-import KeMuYiSequence from '../components/KeMuYiSequence'
-import KeMuYiRandom from '../components/KeMuYiRandom'
-import KeMuYiWrong from '../components/KeMuYiWrong'
-import KeMuYiMockTest from '../components/KeMuYiMockTest'
+import Home from '../containers/Home'
+import KeMuTpl from '../containers/KeMuTpl'
+import KeMuYiSequence from '../containers/KeMuYiSequence'
+import KeMuYiRandom from '../containers/KeMuYiRandom'
+import KeMuYiWrong from '../containers/KeMuYiWrong'
+import KeMuYiMockTest from '../containers/KeMuYiMockTest'
 Vue.use(Router)
 
 export default new Router({
