@@ -14,20 +14,20 @@
 
 ```
 - src
-  - components # 放dumb组件 
+  - components        # 放dumb组件 
     - header.vue 
     - loading.vue
     - ...
-  - containers # 放smart组件
+  - containers        # 放smart组件
     - KeMuYiMock.vue
     - KeMuYiRandom.vue
     - ...
-  - icons # 图标
-  - router # 路由
-  - scss # 样式
-  - utils # 公共方法
+  - icons             # 图标
+  - router            # 路由
+  - scss              # 样式
+  - utils             # 公共方法
   - App.vue
-  - main.js # 入口文件
+  - main.js           # 入口文件
 ```
 
 ## 使用方式
