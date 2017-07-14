@@ -31,7 +31,7 @@
 ```
 
 ## 使用方式
-----
+
 ####  Step 1
 ```
 git clone git@github.com:Juliiii/become-a-driver-vue.git
