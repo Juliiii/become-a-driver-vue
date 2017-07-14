@@ -1,22 +1,47 @@
-# 科目一
+## 简介
 
-> 科目一的刷题webapp,有顺序做题，随机做题，错题本和模拟测试四个功能
+某一天跑到驾校一点通的官网，抓了一下包，发现了获取题目的api。然后开始写一个Vue版本的科目一WebApp。目前完成了顺序练习，随机练习，错题本和模拟测试四个核心功能。做题记录会存在localstorage。
 
-> 有些小细节，以后有空再改吧。核心功能都已经实现。
+## 技术栈
 
-## Build Setup
++ vue
++ vue-router
++ fetch
++ webpack
++ scss
 
-``` bash
-# install dependencies
-npm install
+## 项目架构
 
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
 ```
-=======
+- src
+  - components # 放dumb组件 
+    - header.vue 
+    - loading.vue
+    - ...
+  - containers # 放smart组件
+    - KeMuYiMock.vue
+    - KeMuYiRandom.vue
+    - ...
+  - icons # 图标
+  - router # 路由
+  - scss # 样式
+  - utils # 公共方法
+  - App.vue
+  - main.js # 入口文件
+```
+
+## 使用方式
+----
+####  Step 1
+```
+git clone git@github.com:Juliiii/become-a-driver-vue.git
+```
+
+####  Step 2
+```
+npm run dev
+```
+
+## License
+
+MIT
