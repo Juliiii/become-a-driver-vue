@@ -36,7 +36,7 @@
 
 ## 使用方式
 
-####  Step 1
+#### Step 1
 ```
 git clone git@github.com:Juliiii/become-a-driver-vue.git
 ```
@@ -45,7 +45,7 @@ git clone git@github.com:Juliiii/become-a-driver-vue.git
 ```
 npm i
 ```
-####  Step 3
+#### Step 3
 ```
 npm run dev
 ```
