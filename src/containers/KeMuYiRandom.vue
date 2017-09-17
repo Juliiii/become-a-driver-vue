@@ -10,6 +10,7 @@
       <selects @onSelect="selectHandle" 
               :currentInfo="currentinfo" 
               :option="option"
+              :select="select"
               v-if="loading"/>
       <explain :bestanswer="currentinfo.bestanswer"
                :answer="answer"

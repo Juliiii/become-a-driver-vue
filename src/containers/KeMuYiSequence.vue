@@ -10,6 +10,7 @@
       <selects @onSelect="selectHandle" 
               :currentInfo="currentinfo" 
               :option="option"
+              :select="select"
               v-if="loading"/>
       <explain :bestanswer="currentinfo.bestanswer"
                :answer="answer"
@@ -125,6 +126,7 @@
           let data = await update(this.current);
           this.currentinfo = deepclone(data);
           this.select = this.sqpstates[this.current - 1];
+          console.log(this.select);
           this.show = this.select ? this.select !== this.currentinfo.ta : false;
           this.loading = true;
         } catch (e) {}

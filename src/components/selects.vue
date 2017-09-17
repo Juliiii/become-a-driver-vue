@@ -27,20 +27,17 @@ export default {
     option: {
       type: Array,
       required: true
-    }
-  },
-  data () {
-    return {
-      select: null
+    },
+    select: {
+      type: String
     }
   },
   methods: {
     onSelect (index) {
-      this.select = index;
+      // this.select = index;
       this.$emit('onSelect', {index});
     }
   }
-
 }
 </script>
 

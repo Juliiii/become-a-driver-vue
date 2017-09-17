@@ -8,7 +8,8 @@
 
     <div class="body">
       <selects @onSelect="selectHandle" 
-              :currentInfo="problem" 
+              :currentInfo="problem"
+              :select="select"
               :option="option"
               v-if="loading"/>
       <explain :bestanswer="problem.bestanswer"

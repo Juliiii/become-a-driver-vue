@@ -10,6 +10,7 @@
       <selects @onSelect="selectHandle" 
               :currentInfo="currentInfo" 
               :option="option"
+              :select="select"
               v-if="loading"/>
     </div>
     <div class="bottom">
@@ -62,7 +63,6 @@
       const minutes = this.storage.getItem('minutes');
       const seconds = this.storage.getItem('seconds');
       const score = this.storage.getItem('score');
-      console.log(minutes, seconds);
       this.minutes = minutes ? parseInt(minutes) : 45;
       this.seconds = seconds ? parseInt(seconds) : 0;
       this.score = score ? parseInt(score) : 0;
@@ -150,7 +150,7 @@
       },
       selectHandle ({index}) {
         if (this.select) return;
-        this.select = index;
+        this.select = index.toString();
         index = index.toString();
         this.states[this.current - 1] = this.select;
         if (index !== this.currentInfo.ta) {
@@ -168,7 +168,6 @@
             this.storage.setItem('wrong', wrong);
           }
         } else {
-          console.log('1');
           this.score++;
           this.storage.setItem('score', this.score);
         }
@@ -188,14 +187,15 @@
         arg.forEach((element) => 
           this.storage.removeItem(element)
         );
+        return Promise.resolve();
       },
-      removeItems () {
+      async removeItems () {
         clearInterval(this.timeId);
         const arr = ['minutes', 'seconds', 'mock', 'mock_record', 'mock_states', 'score'];
-        this.clearAll(arr);
+        await this.clearAll(arr);
       },
-      back () {
-        this.removeItems();
+      async back () {
+        await this.removeItems();
         this.$router.push('/');
       }
     }
